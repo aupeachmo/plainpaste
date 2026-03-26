@@ -49,28 +49,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    /// Composites a diagonal slash over an SF Symbol and returns
+    /// Composites a horizontal slash over an SF Symbol and returns
     /// the result as a template image.
     private func slashedImage(_ symbol: NSImage) -> NSImage {
         let size = symbol.size
         let img = NSImage(size: size, flipped: false) { rect in
-            // Draw the base symbol
             symbol.draw(in: rect)
 
-            // Draw the slash: bottom-left to top-right, matching the
-            // angle and weight Apple uses for .slash symbol variants.
+            // Horizontal line through the vertical centre,
+            // crossing the pivot point of the scissors.
             let path = NSBezierPath()
-            let inset: CGFloat = size.height * 0.1
-            path.move(to: NSPoint(x: inset, y: inset))
-            path.line(to: NSPoint(x: size.width - inset, y: size.height - inset))
-            path.lineWidth = size.height * 0.12  // visually matches SF Symbol stroke weight
+            let inset: CGFloat = size.width * 0.05
+            let midY = size.height / 2
+            path.move(to: NSPoint(x: inset, y: midY))
+            path.line(to: NSPoint(x: size.width - inset, y: midY))
+            path.lineWidth = size.height * 0.12
             path.lineCapStyle = .round
             NSColor.black.setStroke()
             path.stroke()
 
             return true
         }
-        img.isTemplate = true  // adapts to light/dark like every other menu-bar icon
+        img.isTemplate = true
         return img
     }
 
