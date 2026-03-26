@@ -95,4 +95,4 @@ The Action will automatically create a GitHub Release, generate release notes fr
 
 ## License
 
-MIT — do whatever you like with it.
+MPL-2.0 — See [LICENSE](LICENSE) for details.
