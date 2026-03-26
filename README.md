@@ -5,6 +5,10 @@ A tiny macOS menu-bar utility that **automatically strips rich-text formatting**
 ![macOS 11+](https://img.shields.io/badge/macOS-11%2B-blue)
 ![Swift](https://img.shields.io/badge/Swift-5.9-orange)
 
+![PlainPaste menu bar dropdown](.img/menu-enabled.png)
+
+![PlainPaste disabled state](.img/menu-disabled.png)
+
 ## How it works
 
 PlainPaste sits in your menu bar and watches the clipboard. Whenever you copy something that contains rich text (RTF or HTML), it instantly replaces it with the plain-text equivalent. You just copy and paste normally — formatting is gone.
@@ -13,7 +17,7 @@ PlainPaste sits in your menu bar and watches the clipboard. Whenever you copy so
 
 PlainPaste uses the **SF Symbol `scissors`** (✂) as its menu bar icon. It renders as a native template image that automatically adapts to light mode, dark mode, and the menu bar's vibrancy — just like a built-in macOS icon.
 
-When you disable stripping, the icon dims so you can tell at a glance.
+When you disable stripping, a horizontal line is drawn through the scissors and the icon dims so you can tell at a glance.
 
 ## Quick start
 
