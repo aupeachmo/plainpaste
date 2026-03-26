@@ -18,22 +18,37 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
 
         if let button = statusItem.button {
-            // Use the SF Symbol "scissors" – available on macOS 11+.
-            // It renders as a native template image that adapts to
-            // light / dark mode and the menu-bar's vibrancy.
-            if let img = NSImage(systemSymbolName: "scissors",
-                                 accessibilityDescription: "PlainPaste") {
-                img.isTemplate = true
-                button.image = img
-            } else {
-                // Fallback for macOS 10.x (unlikely but safe)
-                button.title = "✂"
-            }
             button.toolTip = "PlainPaste – strips clipboard formatting"
         }
 
+        updateIcon()
         buildMenu()
         startMonitoring()
+    }
+
+    // MARK: – Icon
+
+    private func updateIcon() {
+        guard let button = statusItem.button else { return }
+
+        if isEnabled {
+            // Template image: macOS draws it in the native menu-bar color
+            // and adapts automatically to light / dark mode.
+            if let img = NSImage(systemSymbolName: "scissors",
+                                 accessibilityDescription: "PlainPaste – active") {
+                img.isTemplate = true
+                button.image = img
+            }
+        } else {
+            // Non-template image tinted grey so it's visually "off".
+            if let img = NSImage(systemSymbolName: "scissors",
+                                 accessibilityDescription: "PlainPaste – paused") {
+                let config = NSImage.SymbolConfiguration(
+                    paletteColors: [.systemGray]
+                )
+                button.image = img.withSymbolConfiguration(config)
+            }
+        }
     }
 
     // MARK: – Menu
@@ -122,7 +137,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         enabledMenuItem.title = isEnabled
             ? "Strip Formatting: On"
             : "Strip Formatting: Off"
-        statusItem.button?.appearsDisabled = !isEnabled
+        updateIcon()
     }
 
     @objc private func showAbout() {

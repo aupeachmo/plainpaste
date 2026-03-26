@@ -62,10 +62,52 @@ The impact is negligible. Each 200ms wake-up is a few nanoseconds of work, and t
 
 PlainPaste requires **no special permissions**. `NSPasteboard.general` is a shared system resource that any app can read and write. No Accessibility access, no Full Disk Access, no Automation permissions, no user prompts.
 
-## What PlainPaste preserves
+## What PlainPaste acts on — and what it ignores
 
-When stripping, PlainPaste keeps only the `.string` (plain text) representation. It removes RTF, HTML, and any other types. This means:
+PlainPaste only strips when the clipboard contains a rich-text type (`.rtf`, `.html`, or `.rtfd`) alongside a `.string` (plain text) representation. This is specifically the "I copied formatted text" scenario.
 
-- Copied images are left alone (no `.string` type present, so PlainPaste ignores them).
-- File copies (Finder) are left alone (they use `NSFilenamesPboardType`, not rich text).
-- If you copy text that has *only* plain text and no rich formatting, PlainPaste does nothing — it only acts when `.rtf` or `.html` types are present alongside `.string`.
+Everything else is left untouched:
+
+- **Images** — no `.string` type present, so PlainPaste ignores them entirely.
+- **File copies in Finder** — these use file URL types, not rich text.
+- **Plain text** — if you copy text that has no rich formatting, there's nothing to strip.
+- **Drag and drop** — uses a separate pasteboard (`NSDragPboard`), not `NSPasteboard.general`.
+- **Screenshots, color swatches** — no text types present.
+
+## Known edge cases
+
+### Spreadsheet cells
+
+When you copy cells from Excel, Numbers, or Google Sheets in a browser, the clipboard gets `.string` (tab-separated text), `.html` (table structure), and often `.rtf`. PlainPaste will strip those. If you paste into a text editor, that's fine — you get clean tab-separated data. But if you paste into another spreadsheet, the receiving app would have used the HTML to reconstruct cell structure, column widths, merged cells, and formulas. That structure is now gone.
+
+If you're doing spreadsheet work, toggle PlainPaste off from the menu bar while you work, then toggle it back on.
+
+### Links lose their URLs
+
+If you copy "click here" where "here" is a hyperlink, the plain text is just "click here" — the URL is only in the HTML/RTF representation and gets stripped. This is usually the desired behaviour, but worth knowing.
+
+### clearContents() is a sledgehammer
+
+The `NSPasteboard` API doesn't allow selectively removing types. The only way to strip rich text is `clearContents()` followed by writing back the `.string`. This means any custom pasteboard types that apps put alongside rich text (such as `com.apple.iWork.TSPNativeData` from Pages) are also destroyed. In practice this rarely matters because the plain-text fallback is what PlainPaste is designed to produce.
+
+### Intentional rich-text copying
+
+If you're working in a rich-text editor (Pages, Word, Google Docs) and copying styled text to paste elsewhere in the same document, PlainPaste strips it. This is working as designed, but can surprise people who only want plain paste in some contexts. The toggle exists for this.
+
+## User interface
+
+PlainPaste is a menu-bar-only app — it has no Dock icon and no main window. Clicking the scissors icon in the menu bar shows a dropdown menu:
+
+- **Strip Formatting: On / Off** — toggles auto-stripping. When off, PlainPaste still runs but does not touch the clipboard.
+- **Strip Now** — manually strips the current clipboard contents regardless of the toggle state. Useful if you've had stripping off and want to clean one specific copy.
+- **About PlainPaste** — version info.
+- **Quit PlainPaste** — exits the app.
+
+### Menu bar icon states
+
+The icon is the SF Symbol `scissors`. Its appearance changes to reflect whether stripping is active:
+
+- **Enabled:** the icon renders as a **template image** — macOS draws it in the native menu-bar color (white in dark mode, black in light mode) and it adapts automatically to vibrancy and appearance changes. It looks like any other system icon.
+- **Disabled:** the icon renders as a **non-template image tinted grey** using `NSImage.SymbolConfiguration(paletteColors:)`. This makes it visually dimmer than surrounding menu-bar icons, so you can tell at a glance that stripping is paused.
+
+This approach uses macOS's built-in symbol rendering — no custom image assets needed.
