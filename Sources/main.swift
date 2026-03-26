@@ -40,15 +40,38 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 button.image = img
             }
         } else {
-            // Non-template image tinted grey so it's visually "off".
-            if let img = NSImage(systemSymbolName: "scissors",
-                                 accessibilityDescription: "PlainPaste – paused") {
-                let config = NSImage.SymbolConfiguration(
-                    paletteColors: [.systemGray]
-                )
-                button.image = img.withSymbolConfiguration(config)
+            // Draw a diagonal slash through the scissors to match the
+            // macOS convention for "off" (mic.slash, bell.slash, etc.).
+            if let base = NSImage(systemSymbolName: "scissors",
+                                  accessibilityDescription: "PlainPaste – paused") {
+                button.image = slashedImage(base)
             }
         }
+    }
+
+    /// Composites a diagonal slash over an SF Symbol and returns
+    /// the result as a template image.
+    private func slashedImage(_ symbol: NSImage) -> NSImage {
+        let size = symbol.size
+        let img = NSImage(size: size, flipped: false) { rect in
+            // Draw the base symbol
+            symbol.draw(in: rect)
+
+            // Draw the slash: bottom-left to top-right, matching the
+            // angle and weight Apple uses for .slash symbol variants.
+            let path = NSBezierPath()
+            let inset: CGFloat = size.height * 0.1
+            path.move(to: NSPoint(x: inset, y: inset))
+            path.line(to: NSPoint(x: size.width - inset, y: size.height - inset))
+            path.lineWidth = size.height * 0.12  // visually matches SF Symbol stroke weight
+            path.lineCapStyle = .round
+            NSColor.black.setStroke()
+            path.stroke()
+
+            return true
+        }
+        img.isTemplate = true  // adapts to light/dark like every other menu-bar icon
+        return img
     }
 
     // MARK: – Menu

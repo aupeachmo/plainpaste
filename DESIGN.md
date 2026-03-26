@@ -108,6 +108,4 @@ PlainPaste is a menu-bar-only app — it has no Dock icon and no main window. Cl
 The icon is the SF Symbol `scissors`. Its appearance changes to reflect whether stripping is active:
 
 - **Enabled:** the icon renders as a **template image** — macOS draws it in the native menu-bar color (white in dark mode, black in light mode) and it adapts automatically to vibrancy and appearance changes. It looks like any other system icon.
-- **Disabled:** the icon renders as a **non-template image tinted grey** using `NSImage.SymbolConfiguration(paletteColors:)`. This makes it visually dimmer than surrounding menu-bar icons, so you can tell at a glance that stripping is paused.
-
-This approach uses macOS's built-in symbol rendering — no custom image assets needed.
+- **Disabled:** the icon renders as the **scissors with a diagonal slash drawn through it**, matching the macOS convention for "off" states (`mic.slash`, `bell.slash`, `wifi.slash`, etc.). The slash is composited over the base symbol at render time using `NSImage`'s drawing API and the result is still a template image, so it adapts to light/dark mode just like the enabled state. No custom image assets are needed.
