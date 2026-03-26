@@ -82,7 +82,7 @@ git tag v1.0.0
 git push origin v1.0.0
 ```
 
-Then create a release on GitHub from that tag — the Action will build and attach the zip automatically.
+The Action will automatically create a GitHub Release, generate release notes from commits, and attach the zip. No manual steps needed.
 
 ## Requirements
 
