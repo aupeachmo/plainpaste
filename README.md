@@ -61,7 +61,7 @@ xcode-select --install   # if you haven't already
 Then use the Makefile:
 
 ```bash
-make build        # compile the binary to build/PlainPaste
+make compile      # compile the binary to build/PlainPaste
 make bundle       # create build/PlainPaste.app
 make install      # copy PlainPaste.app to ~/Applications
 make run          # compile + run immediately (no install)

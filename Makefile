@@ -5,19 +5,15 @@ BUILD_DIR  := build
 EXECUTABLE := $(BUILD_DIR)/$(APP_NAME)
 INSTALL_DIR := ~/Applications
 
-# ── Build ────────────────────────────────────────────────────────────
-.PHONY: build
-build: $(EXECUTABLE)
-
-$(EXECUTABLE): $(SRC) | $(BUILD_DIR)
-	swiftc $(SRC) -o $(EXECUTABLE) -framework Cocoa -O
-
-$(BUILD_DIR):
+# ── Compile ──────────────────────────────────────────────────────────
+.PHONY: compile
+compile:
 	mkdir -p $(BUILD_DIR)
+	swiftc $(SRC) -o $(EXECUTABLE) -framework Cocoa -O
 
 # ── App bundle ───────────────────────────────────────────────────────
 .PHONY: bundle
-bundle: build
+bundle: compile
 	mkdir -p $(BUILD_DIR)/$(BUNDLE)/Contents/MacOS
 	cp $(EXECUTABLE) $(BUILD_DIR)/$(BUNDLE)/Contents/MacOS/
 	cp Info.plist    $(BUILD_DIR)/$(BUNDLE)/Contents/
@@ -36,7 +32,7 @@ install: bundle
 
 # ── Quick run (no install) ───────────────────────────────────────────
 .PHONY: run
-run: build
+run: compile
 	$(EXECUTABLE)
 
 # ── Clean ────────────────────────────────────────────────────────────
