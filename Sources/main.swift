@@ -172,6 +172,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             paste is plain text.
 
             https://github.com/aupeachmo/plainpaste
+
             Version \(appVersion)
             """
         alert.alertStyle = .informational
