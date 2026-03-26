@@ -99,7 +99,7 @@ If you're working in a rich-text editor (Pages, Word, Google Docs) and copying s
 PlainPaste is a menu-bar-only app — it has no Dock icon and no main window. Clicking the scissors icon in the menu bar shows a dropdown menu:
 
 - **Strip Formatting: On / Off** — toggles auto-stripping. When off, PlainPaste still runs but does not touch the clipboard.
-- **Strip Now** — manually strips the current clipboard contents regardless of the toggle state. Useful if you've had stripping off and want to clean one specific copy.
+- **One-time strip** — strips the current clipboard contents once, regardless of the toggle state. Useful when you've turned auto-stripping off for spreadsheet work but want to clean one specific copy before pasting into a document.
 - **About PlainPaste** — version info.
 - **Quit PlainPaste** — exits the app.
 

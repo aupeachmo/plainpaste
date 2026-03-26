@@ -87,7 +87,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         menu.addItem(NSMenuItem.separator())
 
-        let stripNow = NSMenuItem(title: "Strip Now",
+        let stripNow = NSMenuItem(title: "One-time strip",
                                   action: #selector(stripClipboardNow),
                                   keyEquivalent: "")
         stripNow.target = self
@@ -171,7 +171,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             rich-text formatting from whatever you copy, so every \
             paste is plain text.
 
-            https://github.com/aupeachmo/plainpaste
+            Version 1.0.0
             """
         alert.alertStyle = .informational
         alert.runModal()

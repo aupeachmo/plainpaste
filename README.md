@@ -41,7 +41,7 @@ Grab the latest `PlainPaste.zip` from the [Releases](../../releases) page, unzip
 | Item                     | What it does                                |
 | ------------------------ | ------------------------------------------- |
 | **Strip Formatting: On** | Toggle auto-stripping on / off              |
-| **Strip Now**            | Manually strip the current clipboard        |
+| **One-time strip**       | Strip just this one copy (handy when auto-stripping is off) |
 | **About PlainPaste**     | Version info                                |
 | **Quit PlainPaste**      | Exit the app                                |
 
