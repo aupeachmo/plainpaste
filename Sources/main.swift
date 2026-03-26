@@ -78,7 +78,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func startMonitoring() {
         lastChangeCount = NSPasteboard.general.changeCount
-        timer = Timer.scheduledTimer(timeInterval: 0.5,
+        timer = Timer.scheduledTimer(timeInterval: 0.2,
                                      target: self,
                                      selector: #selector(pollClipboard),
                                      userInfo: nil,
@@ -93,7 +93,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         lastChangeCount = count
 
         let types = pb.types ?? []
-        let hasRich  = types.contains(.rtf) || types.contains(.html)
+        let hasRich  = types.contains(.rtf) || types.contains(.html) || types.contains(.rtfd)
         let hasPlain = types.contains(.string)
 
         guard hasRich, hasPlain,
