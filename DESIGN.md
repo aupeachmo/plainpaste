@@ -62,6 +62,16 @@ The impact is negligible. Each 200ms wake-up is a few nanoseconds of work, and t
 
 PlainPaste requires **no special permissions**. `NSPasteboard.general` is a shared system resource that any app can read and write. No Accessibility access, no Full Disk Access, no Automation permissions, no user prompts.
 
+## Security
+
+The clipboard is untrusted input — any app (or malicious web content) can put arbitrary data on it. PlainPaste reads this data, so the question is whether a crafted clipboard payload could cause harm.
+
+The attack surface is minimal. The data flow is: read a Swift `String` via `pb.string(forType: .string)`, clear the clipboard, write the same string back. The string is never parsed, interpreted, evaluated, or passed to a shell. There is no transformation where malicious input could alter control flow.
+
+Swift's type system eliminates the classic C/C++ attack vectors: arrays are bounds-checked (no buffer overflows), memory is managed by ARC (no use-after-free), string interpolation is type-safe (no format string attacks), and integer arithmetic traps on overflow by default. The code uses no `UnsafePointer`, `UnsafeMutableBufferPointer`, or other unsafe constructs.
+
+The release build includes the Hardened Runtime (`codesign --options runtime`), which enables additional OS-level protections: library validation, memory protection, and code signing enforcement. This is also required for notarization.
+
 ## What PlainPaste acts on — and what it ignores
 
 PlainPaste only strips when the clipboard contains a rich-text type (`.rtf`, `.html`, or `.rtfd`) alongside a `.string` (plain text) representation. This is specifically the "I copied formatted text" scenario.

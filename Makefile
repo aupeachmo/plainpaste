@@ -7,12 +7,13 @@ INSTALL_DIR := ~/Applications
 
 # ── Options ──────────────────────────────────────────────────────────
 # make compile              → fast debug build (no optimisation)
-# make compile RELEASE=1    → optimised release build
+# make compile RELEASE=1    → optimised release build (-O, -wmo, stripped symbols)
 # make compile V=1          → verbose compiler output
 # make compile TIMING=1     → show where the compiler spends time
+# make bundle               → creates .app with strip -x and hardened runtime codesign
 SWIFTFLAGS := -framework Cocoa
 ifdef RELEASE
-  SWIFTFLAGS += -O
+  SWIFTFLAGS += -O -whole-module-optimization -Xlinker -S
 endif
 ifdef V
   SWIFTFLAGS += -v
@@ -37,8 +38,10 @@ compile:
 bundle: compile
 	mkdir -p $(BUILD_DIR)/$(BUNDLE)/Contents/MacOS
 	cp $(EXECUTABLE) $(BUILD_DIR)/$(BUNDLE)/Contents/MacOS/
+	strip -x $(BUILD_DIR)/$(BUNDLE)/Contents/MacOS/$(APP_NAME)
 	cp Info.plist    $(BUILD_DIR)/$(BUNDLE)/Contents/
 	@sed -i '' 's/1\.0\.0/$(VERSION)/g' $(BUILD_DIR)/$(BUNDLE)/Contents/Info.plist
+	codesign --force --sign - --options runtime $(BUILD_DIR)/$(BUNDLE)
 
 	@echo ""
 	@echo "✅  $(BUNDLE) built in $(BUILD_DIR)/"
