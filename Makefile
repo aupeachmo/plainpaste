@@ -5,11 +5,27 @@ BUILD_DIR  := build
 EXECUTABLE := $(BUILD_DIR)/$(APP_NAME)
 INSTALL_DIR := ~/Applications
 
+# ── Options ──────────────────────────────────────────────────────────
+# make compile              → fast debug build (no optimisation)
+# make compile RELEASE=1    → optimised release build
+# make compile V=1          → verbose compiler output
+# make compile TIMING=1     → show where the compiler spends time
+SWIFTFLAGS := -framework Cocoa
+ifdef RELEASE
+  SWIFTFLAGS += -O
+endif
+ifdef V
+  SWIFTFLAGS += -v
+endif
+ifdef TIMING
+  SWIFTFLAGS += -Xfrontend -debug-time-compilation -Xfrontend -debug-time-function-bodies
+endif
+
 # ── Compile ──────────────────────────────────────────────────────────
 .PHONY: compile
 compile:
 	mkdir -p $(BUILD_DIR)
-	swiftc $(SRC) -o $(EXECUTABLE) -framework Cocoa -O
+	swiftc $(SRC) -o $(EXECUTABLE) $(SWIFTFLAGS)
 
 # ── App bundle ───────────────────────────────────────────────────────
 .PHONY: bundle

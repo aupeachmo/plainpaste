@@ -171,7 +171,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             rich-text formatting from whatever you copy, so every \
             paste is plain text.
 
-            Version 1.0.0
+            https://github.com/aupeachmo/plainpaste
             """
         alert.alertStyle = .informational
         alert.runModal()
