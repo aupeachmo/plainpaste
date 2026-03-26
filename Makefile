@@ -21,11 +21,16 @@ ifdef TIMING
   SWIFTFLAGS += -Xfrontend -debug-time-compilation -Xfrontend -debug-time-function-bodies
 endif
 
+# ── Version ──────────────────────────────────────────────────────────
+# Reads the latest git tag (v1.2.3 → 1.2.3). Falls back to "dev".
+VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || echo "dev")
+
 # ── Compile ──────────────────────────────────────────────────────────
 .PHONY: compile
 compile:
 	mkdir -p $(BUILD_DIR)
-	swiftc $(SRC) -o $(EXECUTABLE) $(SWIFTFLAGS)
+	echo 'let appVersion = "$(VERSION)"' > $(BUILD_DIR)/Version.swift
+	swiftc $(SRC) $(BUILD_DIR)/Version.swift -o $(EXECUTABLE) $(SWIFTFLAGS)
 
 # ── App bundle ───────────────────────────────────────────────────────
 .PHONY: bundle
@@ -33,6 +38,7 @@ bundle: compile
 	mkdir -p $(BUILD_DIR)/$(BUNDLE)/Contents/MacOS
 	cp $(EXECUTABLE) $(BUILD_DIR)/$(BUNDLE)/Contents/MacOS/
 	cp Info.plist    $(BUILD_DIR)/$(BUNDLE)/Contents/
+	@sed -i '' 's/1\.0\.0/$(VERSION)/g' $(BUILD_DIR)/$(BUNDLE)/Contents/Info.plist
 
 	@echo ""
 	@echo "✅  $(BUNDLE) built in $(BUILD_DIR)/"
